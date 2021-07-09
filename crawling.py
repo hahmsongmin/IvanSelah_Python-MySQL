@@ -12,7 +12,7 @@ from mysql import set_mysql
 
 
 def get_items(html, category_name, sub_category_name, count):
-    items_result_list = list()
+    # items_result_list = list()
     best_item = html.select(".best-list")
     items = best_item[1].select("ul li")
     for index, item in enumerate(items):
