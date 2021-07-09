@@ -30,6 +30,7 @@ def set_mysql(item_info, count):
         '{item_info['item_code']}')\
     """
 
+    # output for checking
     print(f"total_count : {count}")
 
     # print(sql_ranking)
