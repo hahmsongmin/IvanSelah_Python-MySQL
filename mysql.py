@@ -1,8 +1,9 @@
 import pymysql
 
-def set_mysql(item_info):
+def set_mysql(item_info, count):
 
-    db = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='gkaquf1@', db='bsetproducts', charset='utf8')
+    db = pymysql.connect(host='127.0.0.1', port=3306, user='root',
+                         passwd='gkaquf1@', db='bsetproducts', charset='utf8')
     cursor = db.cursor()
 
     jungbog_check = f"""select count(*) from items where item_code ='{item_info['item_code']}'"""
@@ -19,7 +20,7 @@ def set_mysql(item_info):
         {item_info['discount_percent']},\
         '{item_info['provider']}')\
         """
-        print(sql_item)
+        # print(sql_item)
         cursor.execute(sql_item)
 
     sql_ranking = f"""insert into ranking (main_category, sub_category, item_ranking, item_code)values(
@@ -29,7 +30,9 @@ def set_mysql(item_info):
         '{item_info['item_code']}')\
     """
 
-    print(sql_ranking)
+    print(f"total_count : {count}")
+
+    # print(sql_ranking)
     cursor.execute(sql_ranking)
 
     db.commit()

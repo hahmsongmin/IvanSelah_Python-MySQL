@@ -8,8 +8,10 @@ from mysql import set_mysql
 # step3. connect the two tables with the foreign key.
 # step4. category name, sub name, ranking, title, provider, orinal price, discount price, discount percent
 # TO RUN, FIRST USE THE DATABASE IN MYSQL
+# Approximately, the amount of data is 10,000.
 
-def get_items(html, category_name, sub_category_name):
+
+def get_items(html, category_name, sub_category_name, count):
     items_result_list = list()
     best_item = html.select(".best-list")
     items = best_item[1].select("ul li")
@@ -59,22 +61,22 @@ def get_items(html, category_name, sub_category_name):
 
         # print(category_name, sub_category_name, ranking, item_code, provider, title.get_text(),
         #     ori_price, dis_price, discount_percent)
+        count += 1
+        set_mysql(data_dict, count)
 
-        set_mysql(data_dict)
 
-
-def get_category(category_link, category_name):
+def get_category(category_link, category_name, count):
     # print(category_link, category_name)
     res = requests.get(category_link)
     soup = BeautifulSoup(res.content, 'html.parser')
-    get_items(soup, category_name, "ALL")
+    get_items(soup, category_name, "ALL", count)
 
     sub_categories = soup.select('div.navi.group ul li > a')
     for sub_category in sub_categories:
         res = requests.get(
             'http://corners.gmarket.co.kr/' + sub_category['href'])
         soup = BeautifulSoup(res.content, "html.parser")
-        get_items(soup, category_name, sub_category.get_text())
+        get_items(soup, category_name, sub_category.get_text(), count)
 
 
 gmarket_url = 'http://corners.gmarket.co.kr/Bestsellers'
@@ -82,7 +84,7 @@ res = requests.get(gmarket_url)
 soup = BeautifulSoup(res.content, 'html.parser')
 
 categories = soup.select('#categoryTabG > li a')
-count = 1
+count = 0
 for category in categories:
     items_link = f"http://corners.gmarket.co.kr/{category['href']}"
-    get_category(items_link, category.get_text())
+    get_category(items_link, category.get_text(), count)
